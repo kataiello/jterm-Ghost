@@ -26,9 +26,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+
+import static android.R.attr.key;
 
 
 public class GhostActivity extends AppCompatActivity {
@@ -59,14 +63,43 @@ public class GhostActivity extends AppCompatActivity {
         }
 
         // TODO(you): Handle Bundle savedInstanceState
+
+        //if it's saved
+        if(savedInstanceState == null)
+        {
+            onStart(null);
+        }
+        else
+        {
+            boolean userTurn = savedInstanceState.getBoolean(KEY_USER_TURN);
+            if(userTurn)
+            {
+                this.userTurn = Players.PLAYER;
+            }
+            else
+            {
+                this.userTurn = Players.COMPUTER;
+            }
+            currentWord = savedInstanceState.getString(KEY_CURRENT_WORD);
+            String status = savedInstanceState.getString(KEY_SAVED_STATUS);
+            ((TextView) findViewById(R.id.ghostText)).setText(currentWord);
+            ((TextView) findViewById(R.id.gameStatus)).setText(status);
+        }
+
+
         onStart(null);
     }
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putString(KEY_USER_TURN, userTurn.toString());
+        outState.putString(KEY_CURRENT_WORD, currentWord);
+        outState.putBoolean(KEY_SAVED_STATUS, true);
         super.onSaveInstanceState(outState);
         // TODO(you): Handle onSaveInstanceState
+
     }
 
     @Override
