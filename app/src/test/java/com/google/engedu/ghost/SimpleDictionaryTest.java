@@ -59,4 +59,15 @@ public class SimpleDictionaryTest {
         assertEquals(dictionary.getAnyWordStartingWith("mou"), "mount");
         assertEquals(dictionary.getAnyWordStartingWith("nor"), "north");
     }
+
+    @Test
+    public void testGetGoodWordStartingWith()
+    {
+        //TODO: why is this returning math?
+        assertEquals(dictionary.getGoodWordStartingWith("d"), "done");
+        assertEquals(dictionary.getGoodWordStartingWith("da"), "dance");
+        assertEquals(dictionary.getGoodWordStartingWith("m"), "math");
+        assertEquals(dictionary.getGoodWordStartingWith("mou"), "mount");
+        assertEquals(dictionary.getGoodWordStartingWith("n"), "north");
+    }
 }

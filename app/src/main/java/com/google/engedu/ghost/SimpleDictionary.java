@@ -65,7 +65,7 @@ public class SimpleDictionary implements GhostDictionary {
         //start at the beginning
         int lo = 0;
         //to the end
-        int hi = words.size();
+        int hi = words.size() - 1;
         while(lo <= hi)
         {
             //calculate the mid at each iteration
@@ -103,7 +103,7 @@ public class SimpleDictionary implements GhostDictionary {
         //start at the beginning
         int lo = 0;
         //to the end
-        int hi = words.size();
+        int hi = words.size() - 1;
         while(lo <= hi)
         {
             //calculate the mid at each iteration
@@ -144,16 +144,16 @@ public class SimpleDictionary implements GhostDictionary {
         //start at the beginning
         int lo = 0;
         //to the end
-        int hi = words.size();
+        int hi = words.size() - 1;
         int mid = lo + (hi - lo)/2;
         while(lo <= hi)
         {
             //calculate the mid at each iteration
             mid = lo + (hi - lo)/2;
             //if this is a word that starts with the prefix
-            if(words.get(mid).substring(0, prefix.length()).equals(prefix))
+            if(words.get(mid).equals(prefix))
             {
-                return words.get(mid);
+                break;
             }
             //if the prefix is smaller
             else if(words.get(mid).compareTo(prefix) > 0)
@@ -165,18 +165,20 @@ public class SimpleDictionary implements GhostDictionary {
             {
                 lo = mid + 1;
             }
+
         }
         //probably at the first one, check
 
         ArrayList<String> goodWords = new ArrayList<>();
         int start = mid;
         //go through all words with this prefix in the dictionary
-        while(words.get(mid).substring(0, prefix.length()).equals(prefix))
+        while(mid < words.size() && words.get(mid).startsWith(prefix))
         {
             //check if it has the right number of letters (odd/even?)
             //first choice only has one more letter
             if(words.get(mid).length() - prefix.length() == 1)
             {
+                //TODO: what if the player doesn't use that letter?
                 return words.get(mid);
             }
             //otherwise, if it has an odd number of letters left
@@ -194,7 +196,8 @@ public class SimpleDictionary implements GhostDictionary {
         {
             //just the first one cause i'm lazy
             /** TODO: do i care to change this? probably want to pick the shortest one
-             * which would minimize the chance that the user could choose different letters and mess it up
+             * which would minimize the chance that the user could choose different letters
+             * and change the course
              */
             return goodWords.get(0);
         }
