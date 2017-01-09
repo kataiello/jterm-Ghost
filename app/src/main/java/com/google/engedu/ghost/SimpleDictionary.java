@@ -54,14 +54,40 @@ public class SimpleDictionary implements GhostDictionary {
     /**
      * isWord determines whether the argument `word` is present in the dictionary.
      *
-     * TODO(you): Improve performance above and beyond the naive {@link java.util.List#contains} method.
      *
      * @param word
      * @return true if the word is in the dictionary, false otherwise.
      */
     @Override
-    public boolean isWord(String word) {
-        return words.contains(word);
+    public boolean isWord(String word)
+    {
+        //implemented with binary search
+        //start at the beginning
+        int lo = 0;
+        //to the end
+        int hi = words.size();
+        while(lo <= hi)
+        {
+            //calculate the mid at each iteration
+            int mid = lo + (hi - lo)/2;
+            //if this is a word that starts with the prefix
+            if(words.get(mid).equals(word))
+            {
+                return true;
+            }
+            //if the prefix is smaller
+            else if(words.get(mid).compareTo(word) > 0)
+            {
+                hi = mid - 1;
+            }
+            //if the prefix is larger
+            else if(words.get(mid).compareTo(word) < 0)
+            {
+                lo = mid + 1;
+            }
+        }
+        //no word with the prefix has been found
+        return false;
     }
 
     /**
@@ -73,7 +99,7 @@ public class SimpleDictionary implements GhostDictionary {
      */
     @Override
     public String getAnyWordStartingWith(String prefix) throws NoSuchElementException {
-        // TODO(you): Implement using Binary Search
+        //Implemented using Binary Search
         //start at the beginning
         int lo = 0;
         //to the end
@@ -114,8 +140,73 @@ public class SimpleDictionary implements GhostDictionary {
     @Override
     public String getGoodWordStartingWith(String prefix) {
         String selected = null;
-        // TODO(you): Implement using Binary Search + some special magic
-        return selected;
+        //Implemented using Binary Search + some special magic
+        //start at the beginning
+        int lo = 0;
+        //to the end
+        int hi = words.size();
+        int mid = lo + (hi - lo)/2;
+        while(lo <= hi)
+        {
+            //calculate the mid at each iteration
+            mid = lo + (hi - lo)/2;
+            //if this is a word that starts with the prefix
+            if(words.get(mid).substring(0, prefix.length()).equals(prefix))
+            {
+                return words.get(mid);
+            }
+            //if the prefix is smaller
+            else if(words.get(mid).compareTo(prefix) > 0)
+            {
+                hi = mid - 1;
+            }
+            //if the prefix is larger
+            else if(words.get(mid).compareTo(prefix) < 0)
+            {
+                lo = mid + 1;
+            }
+        }
+        //probably at the first one, check
+
+        ArrayList<String> goodWords = new ArrayList<>();
+        int start = mid;
+        //go through all words with this prefix in the dictionary
+        while(words.get(mid).substring(0, prefix.length()).equals(prefix))
+        {
+            //check if it has the right number of letters (odd/even?)
+            //first choice only has one more letter
+            if(words.get(mid).length() - prefix.length() == 1)
+            {
+                return words.get(mid);
+            }
+            //otherwise, if it has an odd number of letters left
+            else if((words.get(mid).length() - prefix.length()) % 2 == 1)
+            {
+                goodWords.add(words.get(mid));
+            }
+
+            //move the index up
+            mid++;
+        }
+
+        //if we get to here, no word with only 1 letter was found, check if there are any with just odd letters
+        if(!goodWords.isEmpty())
+        {
+            //just the first one cause i'm lazy
+            /** TODO: do i care to change this? probably want to pick the shortest one
+             * which would minimize the chance that the user could choose different letters and mess it up
+             */
+            return goodWords.get(0);
+        }
+        else
+        {
+            //if the list is empty, there are no words with an odd number of letters
+            //--> sorry, gotta lose
+            //return the first word
+            //TODO: do i care to change this? maybe choose the longest word to mess with player
+            return words.get(start);
+        }
+
     }
 
 
