@@ -109,17 +109,17 @@ public class SimpleDictionary implements GhostDictionary {
             //calculate the mid at each iteration
             int mid = lo + (hi - lo)/2;
             //if this is a word that starts with the prefix
-            if(words.get(mid).substring(0, prefix.length()).equals(prefix))
+            if(words.get(mid).startsWith(prefix))
             {
                 return words.get(mid);
             }
             //if the prefix is smaller
-            else if(words.get(mid).substring(0, prefix.length()).compareTo(prefix) > 0)
+            else if(words.get(mid).compareTo(prefix) > 0)
             {
                 hi = mid - 1;
             }
             //if the prefix is larger
-            else if(words.get(mid).substring(0, prefix.length()).compareTo(prefix) < 0)
+            else if(words.get(mid).compareTo(prefix) < 0)
             {
                 lo = mid + 1;
             }
@@ -167,13 +167,18 @@ public class SimpleDictionary implements GhostDictionary {
             }
 
         }
+        mid = lo + (hi - lo)/2;
         //probably at the first one, check
 
         ArrayList<String> goodWords = new ArrayList<>();
         int start = mid;
         //go through all words with this prefix in the dictionary
-        while(mid < words.size() && words.get(mid).startsWith(prefix))
+        while(mid < words.size())
         {
+            if(!words.get(mid).startsWith(prefix))
+            {
+                break;
+            }
             //check if it has the right number of letters (odd/even?)
             //first choice only has one more letter
             if(words.get(mid).length() - prefix.length() == 1)
