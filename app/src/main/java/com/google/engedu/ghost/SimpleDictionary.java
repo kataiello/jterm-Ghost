@@ -74,6 +74,31 @@ public class SimpleDictionary implements GhostDictionary {
     @Override
     public String getAnyWordStartingWith(String prefix) throws NoSuchElementException {
         // TODO(you): Implement using Binary Search
+        //start at the beginning
+        int lo = 0;
+        //to the end
+        int hi = words.size();
+        while(lo <= hi)
+        {
+            //calculate the mid at each iteration
+            int mid = lo + (hi - lo)/2;
+            //if this is a word that starts with the prefix
+            if(words.get(mid).substring(0, prefix.length()).equals(prefix))
+            {
+                return words.get(mid);
+            }
+            //if the prefix is smaller
+            else if(words.get(mid).substring(0, prefix.length()).compareTo(prefix) > 0)
+            {
+                hi = mid - 1;
+            }
+            //if the prefix is larger
+            else if(words.get(mid).substring(0, prefix.length()).compareTo(prefix) < 0)
+            {
+                lo = mid + 1;
+            }
+        }
+        //no word with the prefix has been found
         return null;
     }
 
