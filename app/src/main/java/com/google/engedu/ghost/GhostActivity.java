@@ -39,7 +39,7 @@ public class GhostActivity extends AppCompatActivity {
     private static final String KEY_SAVED_STATUS = "keySavedStatus";
 
     private GhostDictionary dictionary;
-    private boolean userTurn = false;
+    private Players userTurn;
     private Random random = new Random();
     private String currentWord = "";
 
@@ -62,7 +62,12 @@ public class GhostActivity extends AppCompatActivity {
         onStart(null);
     }
 
-    // TODO(you): Handle onSaveInstanceState
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // TODO(you): Handle onSaveInstanceState
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,15 +115,18 @@ public class GhostActivity extends AppCompatActivity {
      * @return true
      */
     public boolean onStart(View view) {
-        userTurn = random.nextBoolean();
+        userTurn = random.nextBoolean() ? Players.COMPUTER : Players.PLAYER;
         TextView text = (TextView) findViewById(R.id.ghostText);
         text.setText("");
         TextView label = (TextView) findViewById(R.id.gameStatus);
-        if (userTurn) {
-            label.setText(R.string.user_turn);
-        } else {
-            label.setText(R.string.computer_turn);
-            computerTurn();
+        switch(userTurn) {
+            case PLAYER:
+                label.setText(R.string.user_turn);
+                break;
+            case COMPUTER:
+                label.setText(R.string.computer_turn);
+                computerTurn();
+                break;
         }
         return true;
     }
@@ -128,30 +136,29 @@ public class GhostActivity extends AppCompatActivity {
      * @param fromUser
      * @return
      */
-    private boolean doChallenge(boolean fromUser) {
+    private boolean doChallenge(Players fromUser) {
         TextView status = (TextView) findViewById(R.id.gameStatus);
         if (dictionary.isWord(currentWord)) {
-            if (!fromUser) {
-                // It is a word! The user loses.
-                status.setText(String.format("%s is a word. The computer wins!", currentWord));
-                return true;
-            } else {
-                // The computer loses, it has formed a word.
-                status.setText(String.format("%s is a word. You win!", currentWord));
-                return true;
+            switch (fromUser) {
+                case COMPUTER: // It is a word! The user loses.
+                    status.setText(String.format("%s is a word. The computer wins!", currentWord));
+                    break;
+                case PLAYER: // The computer loses, it has formed a word.
+                    status.setText(String.format("%s is a word. You win!", currentWord));
             }
+            return true;
         } else if (TextUtils.isEmpty(dictionary.getAnyWordStartingWith(currentWord))) {
-            if (!fromUser) {
-                // This is not a valid word prefix. The user loses.
-                status.setText(String.format("%s is an invalid prefix. The computer wins!",
-                        currentWord));
-                return true;
-            } else {
-                status.setText(String.format("%s is an invalid prefix. You win!", currentWord));
-                return true;
+            switch (fromUser) {
+                case COMPUTER: // This is not a valid word prefix. The user loses.
+                    status.setText(String.format("%s is an invalid prefix. The computer wins!",
+                            currentWord));
+                    break;
+                case PLAYER:
+                    status.setText(String.format("%s is an invalid prefix. You win!", currentWord));
             }
+            return true;
         }
-        if (fromUser) {
+        if (fromUser == Players.PLAYER) {
             // We've challenged and failed. The user loses.
             status.setText(String.format("%s is a valid prefix and not a word. The computer wins!",
                     currentWord));
@@ -163,12 +170,14 @@ public class GhostActivity extends AppCompatActivity {
         TextView status = (TextView) findViewById(R.id.gameStatus);
 
         // Checks if the user's currentWord is a full word, or if it is an invalid prefix.
-        boolean challengeSuccessful = doChallenge(/* from the computer */ false);
+        boolean challengeSuccessful = doChallenge(Players.COMPUTER);
         if (challengeSuccessful) {
             return;
         }
 
-        userTurn = false;
+        userTurn = Players.COMPUTER;
+
+        // TODO(you): Use a Handler to post this after some time (half second?)
 
         // Do computer turn stuff then make it the user's turn again
         status.setText(R.string.computer_turn);
@@ -178,7 +187,12 @@ public class GhostActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.ghostText)).setText(currentWord);
 
         // Keep playing...
-        userTurn = true;
+        userTurn = Players.COMPUTER;
         status.setText(R.string.user_turn);
     }
+}
+
+enum Players {
+    PLAYER,
+    COMPUTER
 }
