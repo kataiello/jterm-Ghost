@@ -86,17 +86,15 @@ public class GhostActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.gameStatus)).setText(status);
         }
 
-
-        onStart(null);
     }
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        outState.putString(KEY_USER_TURN, userTurn.toString());
+        outState.putBoolean(KEY_USER_TURN, userTurn == Players.PLAYER);
         outState.putString(KEY_CURRENT_WORD, currentWord);
-        outState.putBoolean(KEY_SAVED_STATUS, true);
+        outState.putString(KEY_SAVED_STATUS, ((TextView) findViewById(R.id.gameStatus)).getText().toString());
         super.onSaveInstanceState(outState);
         // TODO(you): Handle onSaveInstanceState
 

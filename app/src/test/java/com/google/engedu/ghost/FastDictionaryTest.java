@@ -16,6 +16,7 @@
 
 package com.google.engedu.ghost;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -28,13 +29,39 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class FastDictionaryTest {
+
+    FastDictionary dictionary;
+
+    @Before
+    public void setup()
+    {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("dance");
+        list.add("done");
+        list.add("math");
+        list.add("mount");
+        list.add("north");
+        dictionary = new FastDictionary(list);
+    }
+
     @Test
-    public void testIsWord() {
-        // TODO(you): Add some tests!
+    public void testIsWord()
+    {
+        assertEquals(dictionary.isWord("done"), true);
+        assertEquals(dictionary.isWord("dona"), false);
+        assertEquals(dictionary.isWord("math"), true);
+        assertEquals(dictionary.isWord("mount"), true);
+        assertEquals(dictionary.isWord("norm"), false);
+
     }
 
     @Test
     public void testGetAnyWordStartingWith() {
-        // TODO(you): Add some tests!
+        assertEquals(dictionary.getAnyWordStartingWith("dan"), "dance");
+        assertEquals(dictionary.getAnyWordStartingWith("don"), "done");
+        assertEquals(dictionary.getAnyWordStartingWith("mat"), "math");
+        assertEquals(dictionary.getAnyWordStartingWith("mou"), "mount");
+        assertEquals(dictionary.getAnyWordStartingWith("nor"), "north");
     }
+
 }

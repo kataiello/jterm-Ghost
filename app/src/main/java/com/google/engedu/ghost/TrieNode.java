@@ -17,6 +17,7 @@ package com.google.engedu.ghost;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class TrieNode {
     // A map from the next character in the alphabet to the trie node containing those words
@@ -34,8 +35,25 @@ public class TrieNode {
      *
      * @param s String representing partial suffix of a word.
      */
-    public void add(String s) {
-        // TODO(you): add String s to this node.
+    public void add(String s)
+    {
+        //base case
+        //if the string is empty
+        if(s.isEmpty() || s == null)
+        {
+            isWord = true;
+        }
+        //recursive case
+        else
+        {
+            //if this is not a child yet
+            if (!children.containsKey(s.charAt(0))) {
+                //put it in the hashmap
+                children.put(s.charAt(0), new TrieNode());
+            }
+            //call recursion
+            children.get(s.charAt(0)).add(s.substring(1));
+        }
     }
 
     /**
@@ -44,9 +62,29 @@ public class TrieNode {
      * @param s String representing partial suffix of a word.
      * @return
      */
-    public boolean isWord(String s) {
-        // TODO(you): determine whether this node is part of a complete word for String s.
-        return false;
+    public boolean isWord(String s)
+    {
+        //if this is the end of the string
+        if(s.isEmpty())
+        {
+            //is it a word?
+            return isWord;
+        }
+        else
+        {
+            //if there are any more ways this could go
+            if(children.containsKey(s.charAt(0)))
+            {
+                //call recursion
+                return children.get(s.charAt(0)).isWord(s.substring(1));
+
+            }
+            //otherwise, not a word
+            else
+            {
+                return false;
+            }
+        }
     }
 
     /**
@@ -57,7 +95,48 @@ public class TrieNode {
      */
     public String getAnyWordStartingWith(String s) {
         // TODO(you):
-        return null;
+
+        if(s.isEmpty())
+        {
+            if(isWord)
+            {
+                return "";
+            }
+            else
+            {
+                Set<Character> keyset = children.keySet();
+                if(keyset.isEmpty())
+                {
+                    return null;
+                }
+                Object[] validKids = keyset.toArray();
+                int randomKid = (int) Math.floor(Math.random() * validKids.length);
+                Character letter = (Character) validKids[randomKid];
+
+                String word = children.get(letter).getAnyWordStartingWith("");
+                if(word == null)
+                {
+                    return null;
+                }
+                return letter + word;
+            }
+        }
+        else
+        {
+            Character head = s.charAt(0);
+            String rest = s.substring(1);
+            if(!children.containsKey(head))
+            {
+                return null;
+            }
+            String word = children.get(head).getAnyWordStartingWith(rest);
+            if(word == null)
+            {
+                return null;
+            }
+            return head + word;
+        }
+        
     }
 
     /**
