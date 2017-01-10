@@ -95,6 +95,8 @@ public class TrieNode {
      */
     public String getAnyWordStartingWith(String s) {
         // TODO(you):
+        Character head;
+        String rest;
 
         if(s.isEmpty())
         {
@@ -109,22 +111,15 @@ public class TrieNode {
                 {
                     return null;
                 }
-                Object[] validKids = keyset.toArray();
-                int randomKid = (int) Math.floor(Math.random() * validKids.length);
-                Character letter = (Character) validKids[randomKid];
+                head = keyset.iterator().next();
+                rest = "";
 
-                String word = children.get(letter).getAnyWordStartingWith("");
-                if(word == null)
-                {
-                    return null;
-                }
-                return letter + word;
             }
         }
         else
         {
-            Character head = s.charAt(0);
-            String rest = s.substring(1);
+            head = s.charAt(0);
+            rest = s.substring(1);
             if(!children.containsKey(head))
             {
                 return null;
@@ -136,8 +131,9 @@ public class TrieNode {
             }
             return head + word;
         }
-        
+        return null;
     }
+
 
     /**
      * Find a good complete word with this partial segment.
@@ -147,7 +143,17 @@ public class TrieNode {
      * @param s String representing partial suffix of a word.
      * @return
      */
-    public String getGoodWordStartingWith(String s) {
-        return null;
+    public String getGoodWordStartingWith(String s)
+    {
+        //TODO: write a better algorithm
+        for(int i = 0; i < 10; i++)
+        {
+            String word = getAnyWordStartingWith(s);
+            if(word.length() % 2 == 1)
+            {
+                return word;
+            }
+        }
+        return getAnyWordStartingWith(s);
     }
 }
